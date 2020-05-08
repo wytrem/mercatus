@@ -1,0 +1,19 @@
+name: Mercatus
+main: net.wytrem.spigot.mercatus.Mercatus
+version: @version@
+api-version: @apiVersion@
+description: @description@
+author: wytrem
+website: @website@
+softdepend:
+  - "Vault"
+  - "Oraxen"
+commands:
+  exchange:
+    description: Offer someone an exchange
+    usage: /exchange
+    permission: mercatus.exchange
+permissions:
+  mercatus.exchange:
+    description: Gives access to Mercatus command /exchange
+    default: true

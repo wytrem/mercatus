@@ -1,0 +1,61 @@
+import org.apache.tools.ant.filters.ReplaceTokens
+
+plugins {
+    id "java"
+    id "com.github.johnrengelman.shadow" version "5.1.0"
+}
+
+group 'net.wytrem.spigot'
+version '1.0'
+
+sourceCompatibility = 1.8
+
+description = 'Exchange plugin for spigot'
+
+String apiVersion = '1.14'
+String author = 'wytrem'
+String website = 'https://github.com/wytrem/mercatus/wiki'
+
+tasks.compileJava.sourceCompatibility = 1.8
+tasks.compileJava.targetCompatibility = 1.8
+tasks.compileJava.options.encoding = 'UTF-8'
+
+repositories {
+    mavenCentral()
+    mavenLocal()
+
+    // Spigot and Bungee
+    maven { url "https://repo.codemc.org/repository/nms/" }
+    maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
+
+    // Vault & Oraxen
+    maven { url 'https://jitpack.io' }
+}
+
+dependencies {
+    // Pick only one of these and read the comment in the repositories block.
+    compileOnly 'org.spigotmc:spigot-api:+' // The Spigot API with no shadowing. Requires the OSS repo.
+    compileOnly("com.github.MilkBowl:VaultAPI:1.7") {
+        exclude group: "org.bukkit"
+    }
+    compileOnly files("libs/oraxen-1.25.0.jar")
+    implementation 'net.wytrem.spigot.utils:core:+'
+    implementation 'net.wytrem.spigot.utils:offers:+'
+    implementation 'net.wytrem.spigot.utils:transactions:+'
+    implementation 'net.wytrem.spigot.utils:sharedinventory:+'
+    implementation 'net.wytrem.spigot.utils:material-bridge:+'
+}
+
+tasks.processResources {
+    filter ReplaceTokens, tokens: [
+            "version"    : project.version,
+            "apiVersion" : apiVersion,
+            "description": project.description,
+            "author"     : author,
+            "website"    : website
+    ]
+}
+
+shadowJar {
+    relocate "net.wytrem.spigot.utils", "net.wytrem.spigot.mercatus.utils"
+}
