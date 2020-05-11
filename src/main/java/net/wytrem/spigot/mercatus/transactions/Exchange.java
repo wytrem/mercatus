@@ -63,7 +63,7 @@ public class Exchange extends Transaction<ExchangeDetails, Exchange, Exchanges> 
      * Sends the clicked stack to the exchange inventory if relevant, and broadcast the change on the other screen.
      */
     public void onPlayerClickSelfInventory(InventoryClickEvent event, Side side) {
-        if (event.getAction().equals(InventoryAction.MOVE_TO_OTHER_INVENTORY)) {
+        if (event.isShiftClick()) {
             ItemStack stack = event.getWhoClicked().getInventory().getItem(event.getSlot());
             if (stack != null) {
                 if (canStore(this.getArea(side), Arrays.asList(stack))) {
@@ -349,7 +349,7 @@ public class Exchange extends Transaction<ExchangeDetails, Exchange, Exchanges> 
     public static boolean canStore(Inventory inventory, Iterable<ItemStack> items) {
         Preconditions.checkArgument(inventory.getSize() % 9 == 0);
         Preconditions.checkArgument(inventory.getSize() <= 54);
-        ItemStack[] invRef = inventory.getStorageContents();
+        ItemStack[] invRef = inventory.getContents();
         Inventory inv = Bukkit.createInventory(null, inventory.getSize(), "canStore");
         inv.setContents(invRef);
         inv.setMaxStackSize(inventory.getMaxStackSize());

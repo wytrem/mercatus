@@ -32,7 +32,6 @@ public class Mercatus extends WyPlugin<MercatusConfig> {
     public Texts texts;
     public Screens screens;
     public VaultBridge vault;
-    public NMSHelper nmsHelper;
     public MaterialBridge materialBridge;
 
     // State
@@ -41,8 +40,6 @@ public class Mercatus extends WyPlugin<MercatusConfig> {
     @Override
     protected void preConfigLoad() {
         super.preConfigLoad();
-        this.nmsHelper = new NMSHelper(this);
-        this.enableService(this.nmsHelper);
 
         this.nmsHelper.load(MaterialBridge.class);
         this.materialBridge = this.nmsHelper.get(MaterialBridge.class);

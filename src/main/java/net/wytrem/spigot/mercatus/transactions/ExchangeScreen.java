@@ -8,6 +8,7 @@ import net.wytrem.spigot.utils.conversation.NumericPrompt;
 import net.wytrem.spigot.utils.inventory.WyInventory;
 import net.wytrem.spigot.utils.misc.ItemUtils;
 import net.wytrem.spigot.utils.misc.math.Vec2i;
+import net.wytrem.spigot.utils.nms.SpigotVersion;
 import net.wytrem.spigot.utils.screens.InventoryScreen;
 import net.wytrem.spigot.utils.screens.Screens;
 import net.wytrem.spigot.utils.text.Text;
@@ -21,6 +22,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 /**
@@ -62,6 +64,7 @@ public class ExchangeScreen extends InventoryScreen {
     public void show() {
         super.show();
     }
+
     @EventHandler
     public void inventoryClose(InventoryCloseEvent event) {
         if (this.player == event.getPlayer()) {
@@ -103,7 +106,7 @@ public class ExchangeScreen extends InventoryScreen {
 
         // Self validating button
         {
-            validateButton = new ValidateButton(Material.RED_WOOL);
+            validateButton = new ValidateButton(Material.DIRT);
             if (this.side == Exchange.Side.LEFT) {
                 this.add(0, 0, validateButton);
             } else {
@@ -115,7 +118,7 @@ public class ExchangeScreen extends InventoryScreen {
 
         // Other validating button
         {
-            otherValidateButton = new Button(Material.RED_WOOL);
+            otherValidateButton = new Button(Material.DIRT);
             otherValidateButton.disable();
 
             if (this.side == Exchange.Side.LEFT) {
@@ -190,7 +193,16 @@ public class ExchangeScreen extends InventoryScreen {
 
         // Allow only dragging in valid slots.
         for (int rawSlot : event.getRawSlots()) {
-            if (this.inventory.isSameInv(this.player.getOpenInventory().getInventory(rawSlot))) {
+            Inventory clicked;
+
+            if (rawSlot >= 0 && rawSlot < this.player.getOpenInventory().getTopInventory().getSize()) {
+                clicked = this.player.getOpenInventory().getTopInventory();
+            }
+            else {
+                clicked = this.player.getOpenInventory().getBottomInventory();
+            }
+
+            if (this.inventory.isSameInv(clicked)) {
                 int convertedSlot = this.player.getOpenInventory().convertSlot(rawSlot);
                 Vec2i pos = this.inventory.slotToPos(convertedSlot);
                 if (!this.side.getArea().isInBounds(pos)) {
@@ -241,7 +253,6 @@ public class ExchangeScreen extends InventoryScreen {
 
     // Display methods: called by the exchange when its state changes.
 
-    // TODO: format texts with exchange data
     private Text formatWithOther(Text text) {
         return text.format("other", this.exchange.getPlayer(this.side.other()));
     }
@@ -310,7 +321,7 @@ public class ExchangeScreen extends InventoryScreen {
 
     protected class CurrencyButton extends Button {
         public CurrencyButton() {
-            super(Material.NETHER_STAR);
+            super(Material.DIRT);
         }
 
         @Override
